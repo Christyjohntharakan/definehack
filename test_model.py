@@ -1,19 +1,33 @@
 import joblib
 import numpy as np
+import pandas as pd
 
 # Load the saved model and scaler
-model = joblib.load('herboscan-backend/models/SavedModels/RandomForest/model.pkl')
-scaler = joblib.load('herboscan-backend/models/SavedModels/RandomForest/scaler.pkl')
+model = joblib.load('./SavedModels/RandomForest/model.pkl')
+scaler = joblib.load('./SavedModels/RandomForest/scaler.pkl')
 
-# Example: New data to make predictions (replace this with real data)
-# Assuming the model was trained on 4 features, for example:
-X_new = np.array([[5.1, 3.5, 1.4, 0.2]])  # Shape should match the training data features
+# Function to load data from CSV, scale it, make predictions, and save results to a CSV
+def predict_and_save_to_csv(csv_file_path, output_csv_path):
+    df = pd.read_csv(csv_file_path)
+    df = df.dropna()
 
-# Scale the new data using the same scaler
-X_new_scaled = scaler.transform(X_new)
+    df["Spectral_Data"] = df["Spectral_Data"].astype(str)
+    X_spectral = np.array(df["Spectral_Data"].str.split(",").apply(lambda x: list(map(float, x))).tolist())
 
-# Make predictions with the loaded model
-predictions = model.predict(X_new_scaled)
+    # Combine Spectral_Data and Adulteration_Level as features
+    X = np.hstack((X_spectral, df["Adulteration_Level"].values.reshape(-1, 1)))
 
-# Print the predictions
-print("Predictions:", predictions)
+    # Standardize the feature set
+    X_scaled = scaler.transform(X)
+
+    # Make predictions
+    y_pred = model.predict(X_scaled)
+    y_proba = model.predict_proba(X_scaled)[:, 1]  # Probability for the positive class
+
+    # Add predictions and probabilities to the DataFrame
+    df['Prediction'] = ['Adulterated' if pred == 1 else 'Not Adulterated' for pred in y_pred]
+    df['Probability'] = y_proba
+
+    # Save the DataFrame to a new CSV file
+    df.to_csv(output_csv_path, index=False)
+    print(f"Predictions saved to {output_csv_path}")
