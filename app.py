@@ -31,9 +31,13 @@ def upload_file():
         
         print(f"Received file: {file.filename}")
 
+        # Save the file name to a variable
+        uploaded_file_name = file.filename
+        print(f"Uploaded file name: {uploaded_file_name}")
+
         # Process the file (e.g., save, predict, etc.)
         # You can add your file handling logic here
-        return jsonify({"message": "File received!"}), 200
+        return jsonify({"message": f"File received: {uploaded_file_name}"}), 200
     except Exception as e:
         print(f"Error: {e}")  # Log the actual error
         return jsonify({"error": str(e)}), 500
