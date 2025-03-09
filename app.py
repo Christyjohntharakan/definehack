@@ -35,6 +35,9 @@ def upload_file():
         uploaded_file_name = file.filename
         print(f"Uploaded file name: {uploaded_file_name}")
 
+        # prediction 
+        
+
         # Process the file (e.g., save, predict, etc.)
         # You can add your file handling logic here
         return jsonify({"message": f"File received: {uploaded_file_name}"}), 200
