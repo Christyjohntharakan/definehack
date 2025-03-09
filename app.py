@@ -1,8 +1,9 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import joblib
 import pandas as pd  # Assuming the file is CSV or something similar
+import test_model as tm
 
 # Set up paths
 model_path = './SavedModels/RandomForest/model.pkl'
@@ -36,11 +37,12 @@ def upload_file():
         print(f"Uploaded file name: {uploaded_file_name}")
 
         # prediction 
+        csv_file_path = f"./upload/{uploaded_file_name}"
+        output_csv_path = f"./predictions/predictions_{uploaded_file_name}"
+        tm.predict_and_save_to_csv(csv_file_path, output_csv_path)
+        send_file(output_csv_path, as_attachement=True)
         
-
-        # Process the file (e.g., save, predict, etc.)
-        # You can add your file handling logic here
-        return jsonify({"message": f"File received: {uploaded_file_name}"}), 200
+        return jsonify({"message": f"File received and prediction will be downloaded in few seconds"}), 200
     except Exception as e:
         print(f"Error: {e}")  # Log the actual error
         return jsonify({"error": str(e)}), 500
