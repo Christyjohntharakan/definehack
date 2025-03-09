@@ -5,8 +5,8 @@ import joblib
 import pandas as pd  # Assuming the file is CSV or something similar
 
 # Set up paths
-model_path = '/Users/christyjohntharakan/Library/Mobile Documents/com~apple~CloudDocs/Downloads/HerboScan/herboscan-backend/models/SavedModels/RandomForest/model.pkl'
-scaler_path = '/Users/christyjohntharakan/Library/Mobile Documents/com~apple~CloudDocs/Downloads/HerboScan/herboscan-backend/models/SavedModels/RandomForest/scaler.pkl'
+model_path = './SavedModels/RandomForest/model.pkl'
+scaler_path = './SavedModels/RandomForest/scaler.pkl'
 
 # Load model and scaler
 model = joblib.load(model_path)
